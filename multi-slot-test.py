@@ -2,6 +2,10 @@
 #modelop.slot.1:in-use
 #modelop.slot.2:in-use
 
+baseline=None
+sample=None
+numerical_columns=None
+
 #modelop.init
 def begin():
     """
@@ -28,8 +32,22 @@ def action(datum, slot_no):
     yield datum
 
 #modelop.metrics
-def metrics(data):
-    yield {"f1": 0.3, "AUC": 0.7}
+def metrics(data, slot_no):
+    global baseline, sample, numerical_columns
+    if slot_no==0:
+        baseline=data.copy()
+        numerical_columns = baseline.select_dtypes(['int64', 'float64']).columns
+    if slot_no==2:
+        sample=data.copy()
+    
+    print(baseline, flush=True)
+    print(sample, flush=True)
+    print(numerical_columns, flush=True)
+    if sample is not None and baseline is not None:
+        yield {"foo": "bar"}
+    else: return
+
+
 
 def update(datum):
     
